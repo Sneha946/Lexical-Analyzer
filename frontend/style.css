@@ -1,0 +1,104 @@
+body {
+    font-family: Arial, sans-serif;
+    background:#edf2fb;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    
+}
+
+.main-container {
+    width:100vw;
+    height:100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer{
+    height:200px;
+    border-top: 2px solid black;
+    background-color:white;
+    color: #5e548e;
+    position: fixed;
+    bottom: 0;
+    width:100%;
+}
+.container{
+    flex:1;
+    display: flex;
+    justify-content: space-between;
+    
+   
+}
+.input{
+    width:40%;
+    height:60%;
+    margin-top:50px;
+}
+.output{
+    border-left: 2px solid black;
+    width:60%;
+}
+textarea {
+    width: 80%;
+    height: 200px;
+    font-family: monospace;
+    font-size: 16px;
+    padding: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    margin-top: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#tokenTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#tokenTable th, #tokenTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#tokenTable th {
+    background-color: #f2f2f2;
+}
+.btn{
+    border-radius: 50%;
+    padding:20px;
+    width:120px;
+    margin:10px;
+    color: black;
+    font-weight: 700;
+}.token {
+    padding: 6px 10px;
+    margin: 5px;
+    border-radius: 5px;
+    font-family: monospace;
+    height:40px;
+    width:100px;
+}
+
+/* Match these to the footer button colors */
+.token.keyword { background-color: #cfbaf0; }
+.token.identifier { background-color: #a3c4f3; }
+.token.operator { background-color: #fbf8cc; }
+.token.symbol { background-color: #ffcfd2; }
+.token.double { background-color: #ff85a1; }
+.token.whitespace { background-color: #f1c0e8; }
+.token.number { background-color: #8eecf5; }
+.token.float { background-color: lightgreen; }
+.token.string { background-color: #b9fbc0; }
+.token.char { background-color: burlywood; }

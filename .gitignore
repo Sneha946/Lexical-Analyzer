@@ -1,0 +1,19 @@
+# Ignore node_modules
+**/node_modules/
+
+# Ignore executable files
+*.exe
+*.out
+*.o
+
+# Ignore logs and temp files
+*.log
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore compiled lexer files (optional)
+lex.yy.c
+y.tab.c
+y.tab.h
