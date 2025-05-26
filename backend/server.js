@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
-const { exec } = require('child_process');
+
 
 const app = express();
 const PORT = 3000;
@@ -9,37 +9,81 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 
+
+const { exec } = require('child_process');
 const path = require('path');
 
-
 app.post('/analyze', (req, res) => {
-    const userCode = req.body.code;
+  const userCode = req.body.code;
+  const analyzerDir = path.join(__dirname, 'analyzer');
+  const codeFilePath = path.join(analyzerDir, 'code.txt');
 
-    // Write code to analyzer/code.txt
-    const analyzerPath = path.join(__dirname, 'analyzer');
-    const codeFilePath = path.join(analyzerPath, 'code.txt');
-    fs.writeFileSync(codeFilePath, userCode);
+  // Write code to file for analyzer
+  require('fs').writeFileSync(codeFilePath, userCode);
 
-    // Execute analyzer.exe inside analyzer folder
-    exec('analyzer.exe', { cwd: analyzerPath }, (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Exec error: ${error.message}`);
-            return res.status(500).json({ error: 'Analyzer failed' });
+  exec('analyzer.exe', { cwd: analyzerDir }, (error, stdout, stderr) => {
+    if (error) {
+      console.error('Analyzer execution error:', error.message);
+      return res.status(500).json({ error: 'Analyzer execution failed', details: error.message });
+    }
+
+    // Parse errors from stderr
+    let errors = [];
+    if (stderr && stderr.trim()) {
+      errors = stderr
+        .trim()
+        .split('\n')
+        .filter(line => line.startsWith('ERROR:'))
+        .map(line => line.replace(/^ERROR:\s*/, ''));
+    }
+
+    // Parse symbol table from stdout
+    const symbolTable = [];
+    const lines = stdout.split('\n');
+    let insideSymbolTable = false;
+    const tokens = [];
+
+    for (const line of lines) {
+        const trimmed = line.trim();
+
+        if (trimmed === 'SYMBOL_TABLE_START') {
+            insideSymbolTable = true;
+            continue;
         }
 
-        const lines = stdout.trim().split('\n');
-        const tokens = lines.map(line => {
-            const [value, type] = line.split(':');
-            return { value, type };
-        });
-        console.log(lines);
-        console.log(tokens);
-        res.json({ tokens });
-    });
+        if (trimmed === 'SYMBOL_TABLE_END') {
+            insideSymbolTable = false;
+            continue;
+        }
+
+        if (insideSymbolTable) {
+            try {
+            const sym = JSON.parse(trimmed);
+            symbolTable.push(sym);
+            } catch (e) {
+            // Optionally handle malformed lines
+            }
+        } else {
+            // Extract tokens from lines like: "Line 3: b:IDENTIFIER"
+            const tokenMatch = trimmed.match(/^Line\s+(\d+):\s*(.+?):(.+)$/);
+            if (tokenMatch) {
+            const [, lineNum, value, type] = tokenMatch;
+            tokens.push({
+                line: parseInt(lineNum),
+                value: value.trim(),
+                type: type.trim()
+            });
+            }
+        }
+        }
+
+    console.log("symbol table:",symbolTable);
+    console.log("errors:",errors);
+    console.log("tokens:",tokens);
+
+    res.json({ errors, symbolTable,tokens });
+  });
 });
-
-
-
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running at http://localhost:${PORT}`);
 });
