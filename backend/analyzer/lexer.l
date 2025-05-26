@@ -1,51 +1,57 @@
 %{
 #include <stdio.h>
-
-// Declare yyin so we can redirect input
-extern FILE *yyin;
-
-// We'll print in value:type format for easy parsing
+#include <string.h>
+#include "parser.tab.h"   // From Bison
+extern YYSTYPE yylval;
+extern int yylineno;
 %}
+
+%option yylineno
 
 %%
 
-"int"                   { printf("%s:KEYWORD\n", yytext); }
-"float"                 { printf("%s:KEYWORD\n", yytext); }
-"char"                  { printf("%s:KEYWORD\n", yytext); }
-"if"                    { printf("%s:KEYWORD\n", yytext); }
-"else"                  { printf("%s:KEYWORD\n", yytext); }
-"while"                 { printf("%s:KEYWORD\n", yytext); }
+"int"     { printf("Line %d: %s:DATATYPE\n", yylineno, yytext); yylval.str = strdup(yytext); return DATATYPE; }
+"float"   { printf("Line %d: %s:DATATYPE\n", yylineno, yytext); yylval.str = strdup(yytext); return DATATYPE; }
+"char"    { printf("Line %d: %s:DATATYPE\n", yylineno, yytext); yylval.str = strdup(yytext); return DATATYPE; }
 
-[0-9]+"."[0-9]+         { printf("%s:FLOAT\n", yytext); }
-[0-9]+                  { printf("%s:NUMBER\n", yytext); }
 
-[a-zA-Z_][a-zA-Z0-9_]*  { printf("%s:IDENTIFIER\n", yytext); }
+"if"      { printf("Line %d: %s:KEYWORD\n", yylineno, yytext); return KEYWORD; }
+"else"    { printf("Line %d: %s:KEYWORD\n", yylineno, yytext); return KEYWORD; }
+"while"   { printf("Line %d: %s:KEYWORD\n", yylineno, yytext); return KEYWORD; }
+"print"   { printf("Line %d: %s:KEYWORD\n", yylineno, yytext); return KEYWORD; }
 
-">"|"="|"<"|"<="|">="   { printf("%s:OPERATOR\n", yytext); }
-"=="                    {printf("%s:DOUBLE OPERATOR\n",yytext);}
-"*"|"+"|"-"|"/"         { printf("%s:OPERATOR\n", yytext); }
 
-";"|","|"("|")"|"{"|"}" { printf("%s:SYMBOL\n", yytext); }
+[0-9]+\.[0-9]+   { printf("Line %d: %s:FLOAT\n", yylineno, yytext); yylval.fnum = atof(yytext); return FLOAT; }
+[0-9]+           { printf("Line %d: %s:NUMBER\n", yylineno, yytext); yylval.num = atoi(yytext); return NUMBER; }
 
-[ \t\n]                 { /* ignore whitespace */ }
+[a-zA-Z_][a-zA-Z0-9_]* { printf("Line %d: %s:IDENTIFIER\n", yylineno, yytext); yylval.str = strdup(yytext); return IDENTIFIER; }
 
-.                       { printf("%s:UNKNOWN\n", yytext); }
+"=="        { printf("Line %d: %s:SYMBOL\n", yylineno, yytext); return EQ; }
+">="        { printf("Line %d: %s:SYMBOL\n", yylineno, yytext); return GE; }
+"<="        { printf("Line %d: %s:SYMBOL\n", yylineno, yytext); return LE; }
+">"         { printf("Line %d: %s:SYMBOL\n", yylineno, yytext); return '>'; }
+"<"         { printf("Line %d: %s:SYMBOL\n", yylineno, yytext); return '<'; }
+"="         { printf("Line %d: %s:SYMBOL\n", yylineno, yytext); return '='; }
+";"         { printf("Line %d: %s:SYMBOL\n", yylineno, yytext); return SYMBOL; }
+","         { printf("Line %d: %s:SYMBOL\n", yylineno, yytext); return SYMBOL; }
+"("         { printf("Line %d: %s:SYMBOL\n", yylineno, yytext); return SYMBOL; }
+")"         { printf("Line %d: %s:SYMBOL\n", yylineno, yytext); return SYMBOL; }
+"{"         { printf("Line %d: %s:SYMBOL\n", yylineno, yytext); return SYMBOL; }
+"}"         { printf("Line %d: %s:SYMBOL\n", yylineno, yytext); return SYMBOL; }
+"+"         { printf("Line %d: %s:SYMBOL\n", yylineno, yytext); return '+'; }
+"-"         { printf("Line %d: %s:SYMBOL\n", yylineno, yytext); return '-'; }
+"*"         { printf("Line %d: %s:SYMBOL\n", yylineno, yytext); return '*'; }
+"/"         { printf("Line %d: %s:SYMBOL\n", yylineno, yytext); return '/'; }
+
+
+[ \t\r]+    { /* ignore */ }
+\n          { /*yylineno++;*/ }
+
+
+.           { printf("Line %d: %s:UNKNOWN\n", yylineno, yytext); }
 
 %%
 
 int yywrap() {
     return 1;
-}
-
-int main() {
-    yyin = fopen("code.txt", "r");
-    if (!yyin) {
-        perror("Failed to open code.txt");
-        return 1;
-    }
-
-    yylex();
-
-    fclose(yyin);
-    return 0;
 }
