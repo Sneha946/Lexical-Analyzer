@@ -8,30 +8,63 @@
 <body>
     <div class="main-container">
         <div class="container">
+
+            <!-- Input Section -->
             <div class="input">
-                <h1>Lexical Analyzer for Custom Language</h1>
-                <textarea id="codeInput" placeholder="Type your Custom Language code here..."></textarea>
-                <button onclick="runAnalyzer()">Run Analyzer</button>
+                <h1 style="text-align: center;">Lexical Analyzer for Custom Language</h1>
+                <textarea id="codeInput" placeholder="Type your Custom Language code here... " cols="100" rows="7" style=" border:none;border-radius: 10px;"></textarea><br>
+                <button onclick="runAnalyzer()"  style="background-color:greenyellow;">Run Analyzer</button>
             </div>
+
+            <!-- Output Section -->
             <div class="output">
-                <h2>Token Output</h2>
-                <div class="output-container"></div>
-                
+                <div class="output-columns">
+
+                    <!-- Left Column -->
+                    <div class="left-column">
+                        <h2>Token Output</h2>
+                        <div class="output-container"></div>
+
+                        <h2>Error Window</h2>
+                        <div id="error-container"></div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="right-column">
+                        <h2 style="text-align: center;">Symbol Table</h2>
+                        <input type="text" id="searchInput" placeholder="Filter by name, type, or line number...">
+                        <table id="symbolTable">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Line</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Table rows will be injected here -->
+                            </tbody>
+                        </table>
+                        <button onclick="downloadSymbolTable()" style="margin-top: 10px;">Download Symbol Table</button>
+
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="footer">
-            <h1 >All Token Types</h1>
-            <button class="btn" style="background-color: #fbf8cc;">Operator</button>
-            <button class="btn" style="background-color: #ff85a1; ">Double Operator</button>
-            <button class="btn" style="background-color: #ffcfd2;">Symbol</button>
-            <button class="btn" style="background-color: #f1c0e8;">WhiteSpace </button>
-            <button class="btn" style="background-color:#cfbaf0;">Keyword</button>
-            <button class="btn" style="background-color:#a3c4f3;">Identifier</button>
-            <button class="btn" style="background-color:#8eecf5;">Number</button>
-            <button class="btn" style="background-color:lightgreen;">Float</button>
-            <button class="btn" style="background-color:#b9fbc0">String</button>
-            <button class="btn" style="background-color:burlywood;">Char</button>
-            
+
+            <!-- Footer Section -->
+            <div class="footer">
+                <h1>All Token Types</h1>
+                <button class="btn" style="background-color: #fbf8cc;">Operator</button>
+                <button class="btn" style="background-color: #ff85a1;">Double Operator</button>
+                <button class="btn" style="background-color: #ffcfd2;">Symbol</button>
+                <button class="btn" style="background-color: #f1c0e8;">WhiteSpace</button>
+                <button class="btn" style="background-color:#cfbaf0;">Keyword</button>
+                <button class="btn" style="background-color:#a3c4f3;">Identifier</button>
+                <button class="btn" style="background-color:#8eecf5;">Number</button>
+                <button class="btn" style="background-color:lightgreen;">Float</button>
+                <button class="btn" style="background-color:#b9fbc0">String</button>
+                <button class="btn" style="background-color:burlywood;">Char</button>
+            </div>
         </div>
     </div>
 
