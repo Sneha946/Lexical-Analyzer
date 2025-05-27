@@ -10,10 +10,9 @@ function runAnalyzer() {
         })
         .then(response => response.json())
         .then(data => {
-          console.log(data);
-                displaySymbolTable(data.symbolTable);
-                displayError(data.errors);
-                displayTokens(data.tokens);
+              displaySymbolTable(data.symbolTable);
+              displayError(data.errors);
+              displayTokens(data.tokens);
             })
         .catch(error => console.error('Error:', error));
 
@@ -22,7 +21,9 @@ function runAnalyzer() {
 function displaySymbolTable(symbolTable) {
   searchInput.addEventListener("input", () => {
     let searchInput=document.getElementById("searchInput");
+
     const filter = searchInput.value.toLowerCase();
+    console.log("filter:",filter);
     const filtered = symbolTable.filter(sym =>
       sym.name.toLowerCase().includes(filter) ||
       sym.type.toLowerCase().includes(filter) ||
@@ -30,6 +31,7 @@ function displaySymbolTable(symbolTable) {
     );
     renderTable(filtered);
   });
+  renderTable(symbolTable);
 }
 
 
